@@ -1,36 +1,36 @@
 #include <stdio.h>
 
+void forward(int n){
+	if (n < 10){
+		printf("%d\n",n);
+	}else{
+		forward(n / 10);
+		printf("%d\n", n % 10);
+	}
+}
+
+void bacward(int n){
+	if (n < 10){
+		printf("%d\n",n);
+	}else{
+		printf("%d\n", n % 10);
+		bacward(n / 10);
+	}
+}
+
+
+
+
 int main(){
-	int num;
+	int n;
 	printf("Vvedite 4islo: ");
-	scanf("%d",&num);
+	scanf("%d", &n);
 	
+	forward(n);
+	printf("\n");
 	
-	int tsifri[30];
-	int count = 0;
-	
-	if (num == 0){
-		tsifri[count++] = 0;
-	
-	} else{
-		while (num > 0){
-			tsifri[count++] = num % 10;
-			num /= 10;
-		}
-	}
-	
-	int i;
-	
-	for(i = count - 1; i>=0; i--){
-		printf("%d",tsifri[i]);
-		if (i != 0) printf(" ");
-	}
-	printf(" => ");
-	
-	for(i = 0; i < count; i++ ){
-		printf("%d", tsifri[i]);
-		if (i != count - 1) printf(" ");
-	}
+	bacward(n);
+	printf("\n");
 	
 	return 0;
 }
