@@ -1,36 +1,36 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-int main(){
-	int num;
-	printf("Vvedite 4islo: ");
-	scanf("%d",&num);
-	
-	
-	int tsifri[30];
-	int count = 0;
-	
-	if (num == 0){
-		tsifri[count++] = 0;
-	
-	} else{
-		while (num > 0){
-			tsifri[count++] = num % 10;
-			num /= 10;
-		}
-	}
-	
-	int i;
-	
-	for(i = count - 1; i>=0; i--){
-		printf("%d",tsifri[i]);
-		if (i != 0) printf(" ");
-	}
-	printf(" => ");
-	
-	for(i = 0; i < count; i++ ){
-		printf("%d", tsifri[i]);
-		if (i != count - 1) printf(" ");
-	}
-	
-	return 0;
+#define MAX(arr, size) ({ \
+    int max_val = arr[0]; \
+    for (int i = 1; i < size; i++) { \
+        if (arr[i] > max_val) max_val = arr[i]; \
+    } \
+    max_val; \
+})
+
+int main() {
+    char stroka[100];
+    printf("Vvedite 4isla 4erez probel: ");
+    fgets(stroka, sizeof(stroka), stdin);
+    stroka[strcspn(stroka, "\n")] = '\0';
+
+    int numbers[100];
+    int count = 0;
+
+    char *razd = strtok(stroka, " ");
+    while (razd != NULL && count < 100) {
+        numbers[count++] = atoi(razd);
+        razd = strtok(NULL, " ");
+    }
+
+    if (count > 0) {
+        int maximum = MAX(numbers, count);
+        printf("max: %d\n", maximum);
+    } else {
+        printf("Chisla ne vvedeny.\n");
+    }
+
+    return 0;
 }
