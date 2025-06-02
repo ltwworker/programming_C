@@ -5,16 +5,27 @@
 
 #define MAX_INPUT 100
 
-const char *week_days[] = {"Voskresene", "Ponedelnik", "Vtornik", "Sreda", "Chetverg", "Pyatnica", "Subbota"};
-const char *week_days_short[] = {"Vs", "Pn", "Vt", "Sr", "Ct", "Pt", "Sb"};
 const char *months[] = {
     "Yanvar", "Fevral", "Mart", "Aprel", "Mai", "Iyun",
     "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
 };
 
+
 int is_leap_year(int year) {
-    return (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
+    struct tm date = {0};
+    date.tm_year = year - 1900;  
+    date.tm_mon = 1;             
+    date.tm_mday = 29;           
+
+    time_t t = mktime(&date);
+    if (t == -1) {
+        return 0; 
+    }
+    
+    return (date.tm_mday == 29);
 }
+
+
 
 int days_in_month(int year, int month) {
     static const int days_month[] = {31,28,31,30,31,30,31,31,30,31,30,31};
@@ -32,7 +43,7 @@ int day_of_week(int year, int month, int day) {
     int k = year % 100;
     int j = year / 100;
     int h = (day + 13*(month + 1)/5 + k + k/4 + j/4 + 5*j) % 7;
-    int d = (h + 6) % 7;
+    int d = (h + 5) % 7;
     return d;
 }
 
@@ -82,8 +93,6 @@ int main() {
         return 1;
     }
 
-    input[strcspn(input, "\n")] = 0;
-
     if (strcmp(input, "now") == 0) {
         time_t t = time(NULL);
         struct tm *tm_now = localtime(&t);
@@ -130,4 +139,3 @@ int main() {
     printf("Neverny format vvoda\n");
     return 1;
 }
-
