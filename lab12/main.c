@@ -3,139 +3,86 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_INPUT 100
+#define MAX_VVOD 100
 
-const char *months[] = {
-    "Yanvar", "Fevral", "Mart", "Aprel", "Mai", "Iyun",
-    "Iyul", "Avgust", "Sentyabr", "Oktyabr", "Noyabr", "Dekabr"
-};
+struct tm poluchit_tm_datu(int god, int mesyats, int den) {
+    struct tm data = {0};
+    data.tm_year = god - 1900;
+    data.tm_mon = mesyats - 1;
+    data.tm_mday = den;
+    mktime(&data);
+    return data;
+}
 
+void pechatat_den_nedeli(int god, int mesyats, int den) {
+    struct tm data = poluchit_tm_datu(god, mesyats, den);
+    char buf[20];
+    strftime(buf, sizeof(buf), "%A", &data);
+    printf("%s", buf);
+}
 
-int is_leap_year(int year) {
-    struct tm date = {0};
-    date.tm_year = year - 1900;  
-    date.tm_mon = 1;             
-    date.tm_mday = 29;           
+void pechatat_korotkiy_den(int den_nedeli) {
+    const char* dni[] = {"Vs", "Pn", "Vt", "Sr", "Cht", "Pt", "Sb"};
+    printf("%s", dni[den_nedeli]);
+}
 
-    time_t t = mktime(&date);
-    if (t == -1) {
-        return 0; 
+void pechatat_mesyats(int god, int mesyats) {
+    struct tm pervoe = poluchit_tm_datu(god, mesyats, 1);
+    int dney_v_mesyatse = poluchit_tm_datu(god, mesyats + 1, 0).tm_mday;
+    
+    printf("\n    %d-%02d\n", god, mesyats);
+    
+    for (int i = 0; i < 7; i++) {
+        pechatat_korotkiy_den(i);
+        printf(" ");
+    }
+    printf("\n");
+    
+    for (int i = 0; i < pervoe.tm_wday; i++) {
+        printf("    ");
     }
     
-    return (date.tm_mday == 29);
-}
-
-
-
-int days_in_month(int year, int month) {
-    static const int days_month[] = {31,28,31,30,31,30,31,31,30,31,30,31};
-    if (month == 2) {
-        return days_month[1] + is_leap_year(year);
-    }
-    return days_month[month - 1];
-}
-
-int day_of_week(int year, int month, int day) {
-    if (month < 3) {
-        month += 12;
-        year--;
-    }
-    int k = year % 100;
-    int j = year / 100;
-    int h = (day + 13*(month + 1)/5 + k + k/4 + j/4 + 5*j) % 7;
-    int d = (h + 5) % 7;
-    return d;
-}
-
-int i, d, month;
-void print_month_calendar(int year, int month) {
-    printf("\n    %s %d\n", months[month - 1], year);
-    for (i = 0; i < 7; i++) {
-        printf("%s ", week_days_short[i]);
+    for (int den = 1; den <= dney_v_mesyatse; den++) {
+        printf("%2d  ", den);
+        if ((pervoe.tm_wday + den) % 7 == 0) printf("\n");
     }
     printf("\n");
-
-    int first_day = day_of_week(year, month, 1);
-    int days = days_in_month(year, month);
-
-    for (i = 0; i < first_day; i++) {
-        printf("   ");
-    }
-
-    for (d = 1; d <= days; d++) {
-        printf("%2d ", d);
-        if ((first_day + d) % 7 == 0) {
-            printf("\n");
-        }
-    }
-    printf("\n");
-}
-
-void print_year_calendar(int year) {
-    printf("\nKalendar na %d god\n", year);
-    for (month = 1; month <= 12; month++) {
-        print_month_calendar(year, month);
-        printf("\n");
-    }
-}
-
-void print_day_of_week(int year, int month, int day) {
-    int w = day_of_week(year, month, day);
-    printf("Data: %04d.%02d.%02d - %s\n", year, month, day, week_days[w]);
 }
 
 int main() {
-    char input[MAX_INPUT];
-
-    printf("Vvedite datu (gggg.mm.dd, gggg.mm, gggg, now): ");
-    if (fgets(input, sizeof(input), stdin) == NULL) {
-        printf("Oshibka vvoda\n");
-        return 1;
-    }
-
-    if (strcmp(input, "now") == 0) {
-        time_t t = time(NULL);
-        struct tm *tm_now = localtime(&t);
-        int year = tm_now->tm_year + 1900;
-        int month = tm_now->tm_mon + 1;
-        int day = tm_now->tm_mday;
-        print_day_of_week(year, month, day);
+    setlocale(LC_TIME, "ru_RU.UTF-8");
+    
+    char vvod[MAX_VVOD];
+    printf("Vvedite datu (gggg.mm.dd, gggg.mm, gggg ili 'now'): ");
+    fgets(vvod, MAX_VVOD, stdin);
+    vvod[strcspn(vvod, "\n")] = 0;
+    
+    if (strcmp(vvod, "now") == 0) {
+        time_t seychas = time(NULL);
+        struct tm* tm_seychas = localtime(&seychas);
+        printf("Segodnya: ");
+        pechatat_den_nedeli(tm_seychas->tm_year + 1900, tm_seychas->tm_mon + 1, tm_seychas->tm_mday);
+        printf("\n");
         return 0;
     }
-
-    int year = 0, month = 0, day = 0;
-    int scanned = 0;
-
-    scanned = sscanf(input, "%d.%d.%d", &year, &month, &day);
-    if (scanned == 3) {
-        if (year < 1 || month < 1 || month > 12 || day < 1 || day > days_in_month(year, month)) {
-            printf("Nevernaya data\n");
-            return 1;
+    
+    int god, mesyats = 1, den = 1;
+    if (sscanf(vvod, "%d.%d.%d", &god, &mesyats, &den) == 3) {
+        printf("Den nedeli: ");
+        pechatat_den_nedeli(god, mesyats, den);
+        printf("\n");
+    } 
+    else if (sscanf(vvod, "%d.%d", &god, &mesyats) == 2) {
+        pechatat_mesyats(god, mesyats);
+    } 
+    else if (sscanf(vvod, "%d", &god) == 1) {
+        for (mesyats = 1; mesyats <= 12; mesyats++) {
+            pechatat_mesyats(god, mesyats);
         }
-        print_day_of_week(year, month, day);
-        return 0;
+    } 
+    else {
+        printf("Neverny format vvoda\n");
     }
-
-    scanned = sscanf(input, "%d.%d", &year, &month);
-    if (scanned == 2) {
-        if (year < 1 || month < 1 || month > 12) {
-            printf("Neverny mesyac ili god\n");
-            return 1;
-        }
-        print_month_calendar(year, month);
-        return 0;
-    }
-
-    scanned = sscanf(input, "%d", &year);
-    if (scanned == 1) {
-        if (year < 1) {
-            printf("Neverny god\n");
-            return 1;
-        }
-        print_year_calendar(year);
-        return 0;
-    }
-
-    printf("Neverny format vvoda\n");
-    return 1;
+    
+    return 0;
 }
