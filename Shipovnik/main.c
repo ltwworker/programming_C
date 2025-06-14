@@ -330,28 +330,28 @@ int main() {
 }
 
 1. Создать файл input.txt в который поместить 2 случайные матрицы, размера, заданного пользователем. закрыть файл. Отчистить массивы.
-	#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 int main() {
-    int rows, cols;
+    int x, y;
     printf("Vvedite kol vo strok i slobtosv: ");
-    scanf("%d %d", &rows, &cols);
+    scanf("%d %d", &x, &y);
 
     int i,j;
-    int **matrix1 = malloc(rows * sizeof(int*));
-    int **matrix2 = malloc(rows * sizeof(int*));
-    for (i = 0; i < rows; i++) {
-        matrix1[i] = malloc(cols * sizeof(int));
-        matrix2[i] = malloc(cols * sizeof(int));
+    int **matrix1 = malloc(x * sizeof(int*));
+    int **matrix2 = malloc(x * sizeof(int*));
+    for (i = 0; i < x; i++) {
+        matrix1[i] = malloc(y * sizeof(int));
+        matrix2[i] = malloc(y * sizeof(int));
     }
 
     srand(time(NULL)); 
 
 
-    for (i = 0; i < rows; i++) {
-        for (j = 0; j < cols; j++) {
+    for (i = 0; i < x; i++) {
+        for (j = 0; j < y; j++) {
             matrix1[i][j] = rand() % 100;
             matrix2[i][j] = rand() % 100;
         }
@@ -364,16 +364,16 @@ int main() {
     }
 
     fprintf(file, "Matrixa 1:\n");
-    for (i = 0; i < rows; i++) {
-        for (j = 0; j < cols; j++) {
+    for (i = 0; i < x; i++) {
+        for (j = 0; j < y; j++) {
             fprintf(file, "%d ", matrix1[i][j]);
         }
         fprintf(file, "\n");
     }
 
     fprintf(file, "\nmatrixa 2:\n");
-    for (i = 0; i < rows; i++) {
-        for (j = 0; j < cols; j++) {
+    for (i = 0; i < x; i++) {
+        for (j = 0; j < y; j++) {
             fprintf(file, "%d ", matrix2[i][j]);
         }
         fprintf(file, "\n");
@@ -382,10 +382,6 @@ int main() {
     fclose(file); 
 
     
-    for (i = 0; i < rows; i++) {
-        free(matrix1[i]);
-        free(matrix2[i]);
-    }
     free(matrix1);
     free(matrix2);
 
