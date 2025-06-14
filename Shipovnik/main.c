@@ -330,6 +330,67 @@ int main() {
 }
 
 1. Создать файл input.txt в который поместить 2 случайные матрицы, размера, заданного пользователем. закрыть файл. Отчистить массивы.
+	#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+    int rows, cols;
+    printf("Vvedite kol vo strok i slobtosv: ");
+    scanf("%d %d", &rows, &cols);
+
+    int i,j;
+    int **matrix1 = malloc(rows * sizeof(int*));
+    int **matrix2 = malloc(rows * sizeof(int*));
+    for (i = 0; i < rows; i++) {
+        matrix1[i] = malloc(cols * sizeof(int));
+        matrix2[i] = malloc(cols * sizeof(int));
+    }
+
+    srand(time(NULL)); 
+
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            matrix1[i][j] = rand() % 100;
+            matrix2[i][j] = rand() % 100;
+        }
+    }
+
+    FILE *file = fopen("input.txt", "w");
+    if (file == NULL) {
+        printf("Error.\n");
+        return 1;
+    }
+
+    fprintf(file, "Matrixa 1:\n");
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            fprintf(file, "%d ", matrix1[i][j]);
+        }
+        fprintf(file, "\n");
+    }
+
+    fprintf(file, "\nmatrixa 2:\n");
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            fprintf(file, "%d ", matrix2[i][j]);
+        }
+        fprintf(file, "\n");
+    }
+
+    fclose(file); 
+
+    
+    for (i = 0; i < rows; i++) {
+        free(matrix1[i]);
+        free(matrix2[i]);
+    }
+    free(matrix1);
+    free(matrix2);
+
+    return 0;
+}
 2. Открыть input.txt файл и прочитать матрицы, произвести их перемножение и сложение (С помощью функций), вывести результат в файл output.txt
 3. Найти номер минимального элемента в матрице и найти количество нечетных числей в ней.
 4. Найти матрицу с одинаковыми числами в строке или столбце
